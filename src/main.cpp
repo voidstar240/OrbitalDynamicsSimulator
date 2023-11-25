@@ -1,8 +1,10 @@
+#include <cmath>
 #include <cstdint>
 #include <iostream>
 #include <vector>
 #include "body.h"
 #include "integrator.h"
+#include "file_handler.h"
 
 enum class Command : uint8_t {
     INVALID = 0,
@@ -90,6 +92,24 @@ bool input_Y_n() {
     return !((str.size() > 0) && ((str[0] == 'n') || (str[0] == 'N')));
 }
 
+std::vector<Vector3> rate_func(std::vector<Body> state, double t) {
+    std::vector<Vector3> rates;
+    for (size_t i = 0; i < state.size(); i++) {
+        Vector3 rate;
+        for (size_t j = 0; j < state.size(); j++) {
+            if (j == i) {
+                continue;
+            }
+            double rate_scal = state[j].mu / std::pow(dist(state[j].pos, state[i].pos), 3.0);
+            Vector3 diff = state[j].pos - state[i].pos;
+            rate.x += rate_scal * diff.x;
+            rate.y += rate_scal * diff.y;
+            rate.z += rate_scal * diff.z;
+        }
+    }
+    return rates;
+}
+
 int main() {
     std::vector<Body> bodies;
     std::string file_name = "output.csv";
@@ -169,14 +189,22 @@ int main() {
             }
             case Command::SET_DT: {
                 dt = input_double(" dt");
+                if (dt < 0) {
+                    dt = 0.01;
+                }
                 break;
             }
             case Command::SET_STEPS: {
                 steps = input_int(" steps");
+                if (steps < 1) {
+                    steps = 1;
+                }
                 break;
             }
             case Command::RUN: {
-                // run
+                ForwardEuler euler = ForwardEuler(dt, steps, bodies, &rate_func);
+                std::vector<std::vector<Body>> data = euler.run();
+                save_to_file(file_name, data, dt);
                 break;
             }
             case Command::CHANGE_NAME: {
