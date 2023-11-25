@@ -4,6 +4,7 @@
 #include <iostream>
 #include "body.h"
 
+// the base class of all integrators
 class Integrator {
 public:
     double dt;
@@ -14,10 +15,12 @@ public:
     virtual std::vector<std::vector<Body>> run() const = 0;
 };
 
+// helper function to calculate the distance between 2 positions
 double dist(Vector3 a, Vector3 b) {
     return std::sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y) + (a.z-b.z)*(a.z-b.z));
 }
 
+// the rate function
 std::vector<Vector3> grav_rate_func(std::vector<Body> state, double t) {
     std::vector<Vector3> rates;
     for (size_t i = 0; i < state.size(); i++) {
@@ -36,6 +39,7 @@ std::vector<Vector3> grav_rate_func(std::vector<Body> state, double t) {
     return rates;
 }
 
+// Forward Euler Integrator derived class
 class ForwardEuler : Integrator {
 public:
     ForwardEuler(double dt, size_t steps, std::vector<Body> initial, std::vector<Vector3> (*rate)(std::vector<Body> state, double time)) {
@@ -50,8 +54,10 @@ public:
         states.push_back(initial_conditions);
         for (size_t n = 1; n <= steps; n++) {
             double time = dt * n;
+            // current state = last state
             std::vector<Body> state_n = states[n - 1];
             std::vector<Vector3> rate = grav_rate_func(states[n - 1], time - dt);
+            // add rate*dt to the current state (which is currently set to last state)
             for (size_t i = 0; i < state_n.size(); i++) {
                 state_n[i].vel.x += dt * rate[i].x;
                 state_n[i].vel.y += dt * rate[i].y;

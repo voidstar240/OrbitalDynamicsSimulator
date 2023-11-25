@@ -6,6 +6,7 @@
 #include "integrator.h"
 #include "file_handler.h"
 
+// all possible commands
 enum class Command : uint8_t {
     INVALID = 0,
     QUIT = 1,
@@ -20,6 +21,7 @@ enum class Command : uint8_t {
     SET_STEPS = 10,
 };
 
+// parses the input string into a command
 Command input_command() {
     std::cout << "[cmd]: ";
     std::string cmd;
@@ -50,8 +52,10 @@ Command input_command() {
     }
 }
 
+// helper function for handling int input
 int input_int(std::string label) {
     while (true) {
+        // keep prompting for int input until a valid int is provided
         std::cout << "[int]" << label << ": ";
         std::string str;
         std::cin >> str;
@@ -63,8 +67,10 @@ int input_int(std::string label) {
     }
 }
 
+// helper function for handling double input
 double input_double(std::string label) {
     while (true) {
+        // keep prompting for double input until a valid double is provided
         std::cout << "[double]" << label << ": ";
         std::string str;
         std::cin >> str;
@@ -76,7 +82,8 @@ double input_double(std::string label) {
     }
 }
 
-// yes is true, no is default
+// helper function for handling condition input
+// yes is true, no is the default
 bool input_y_N() {
     std::cout << "[y/N]: ";
     std::string str;
@@ -84,7 +91,8 @@ bool input_y_N() {
     return (str.size() > 0) && ((str[0] == 'y') || (str[0] == 'Y'));
 }
 
-// yes is true, yes is default
+// helper function for handling condition input
+// yes is true, yes is the default
 bool input_Y_n() {
     std::cout << "[Y/n]: ";
     std::string str;
@@ -110,9 +118,11 @@ std::vector<Vector3> rate_func(std::vector<Body> state, double t) {
     return rates;
 }
 
+// the name of the output file
+std::string file_name = "output.csv";
+
 int main() {
     std::vector<Body> bodies;
-    std::string file_name = "output.csv";
     double dt = 100;
     int steps = 100;
     std::cout << "Orbital Dynamics Simulator\nType `help` for a list of commands." << std::endl;
@@ -128,7 +138,16 @@ int main() {
                 break;
             }
             case Command::HELP: {
-                std::cout << "HELP Page" << std::endl;
+                std::cout << "quit       quits the program" << std::endl;
+                std::cout << "help       displays this page" << std::endl;
+                std::cout << "list       displays all bodies for simulation" << std::endl;
+                std::cout << "add        adds a new body to be simulated" << std::endl;
+                std::cout << "del        deletes a body at an index" << std::endl;
+                std::cout << "dell_all   deletes all the bodies" << std::endl;
+                std::cout << "set_dt     sets the timestep time for the simulate" << std::endl;
+                std::cout << "set_steps  sets the number of timesteps to simulate" << std::endl;
+                std::cout << "run        runs the simulation and outputs the data to the file" << std::endl;
+                std::cout << "filename   changes the output file name" << std::endl;
                 break;
             }
             case Command::LIST_BODIES: {
