@@ -100,6 +100,12 @@ bool input_Y_n() {
     return !((str.size() > 0) && ((str[0] == 'n') || (str[0] == 'N')));
 }
 
+// helper function for computing the distance between vectors
+double dist(const Vector3 a, const Vector3 b) {
+    return std::sqrt((a.x-b.x)*(a.x-b.x) + (a.y-b.y)*(a.y-b.y) + (a.z-b.z)*(a.z-b.z));
+}
+
+// computes the gravitational force of attraction between all bodies
 std::vector<Vector3> rate_func(std::vector<Body> state, double t) {
     std::vector<Vector3> rates;
     for (size_t i = 0; i < state.size(); i++) {
@@ -114,6 +120,7 @@ std::vector<Vector3> rate_func(std::vector<Body> state, double t) {
             rate.y += rate_scal * diff.y;
             rate.z += rate_scal * diff.z;
         }
+        rates.push_back(rate);
     }
     return rates;
 }
@@ -143,7 +150,7 @@ int main() {
                 std::cout << "list       displays all bodies for simulation" << std::endl;
                 std::cout << "add        adds a new body to be simulated" << std::endl;
                 std::cout << "del        deletes a body at an index" << std::endl;
-                std::cout << "dell_all   deletes all the bodies" << std::endl;
+                std::cout << "del_all   deletes all the bodies" << std::endl;
                 std::cout << "set_dt     sets the timestep time for the simulate" << std::endl;
                 std::cout << "set_steps  sets the number of timesteps to simulate" << std::endl;
                 std::cout << "run        runs the simulation and outputs the data to the file" << std::endl;
@@ -221,9 +228,20 @@ int main() {
                 break;
             }
             case Command::RUN: {
+                std::cout << "Simulation Settings:" << std::endl;
+                std::cout << "  dt: " << dt << std::endl;
+                std::cout << "  steps: " << steps << std::endl;
+                std::cout << "  filename: " << file_name << std::endl;
+                std::cout << "Do you want to start the simulation?" << std::endl;
+                if (!input_y_N()) {
+                    std::cout << "Simulation Aborted." << std::endl;
+                    break;
+                }
                 ForwardEuler euler = ForwardEuler(dt, steps, bodies, &rate_func);
                 std::vector<std::vector<Body>> data = euler.run();
+                std::cout << "Simulation complete!" << std::endl;
                 save_to_file(file_name, data, dt);
+                std::cout << "Data saved to " << file_name << std::endl;
                 break;
             }
             case Command::CHANGE_NAME: {
