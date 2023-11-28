@@ -4,6 +4,9 @@
 #include <iostream>
 #include "body.h"
 
+template<typename T>
+using vector = std::vector<T>;
+
 // the base class of all integrators
 class Integrator {
 public:
