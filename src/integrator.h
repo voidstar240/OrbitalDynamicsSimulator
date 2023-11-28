@@ -12,31 +12,31 @@ class Integrator {
 public:
     double dt;
     size_t steps;
-    std::vector<Body> initial_conditions;
+    vector<Body> initial_conditions;
     // vvv funciton ptr, returns acceleration vectors vvv
-    std::vector<Vector3> (*rate_func)(std::vector<Body> state, double time);
+    vector<Vector3> (*rate_func)(vector<Body> state, double time);
 
-    virtual std::vector<std::vector<Body>> run() const = 0;
+    virtual vector<vector<Body>> run() const = 0;
 };
 
 // Forward Euler Integrator derived class
 class ForwardEuler : Integrator {
 public:
-    ForwardEuler(double dt, size_t steps, std::vector<Body> initial, std::vector<Vector3> (*rate)(std::vector<Body> state, double time)) {
+    ForwardEuler(double dt, size_t steps, vector<Body> initial, vector<Vector3> (*rate)(vector<Body> state, double time)) {
         this->dt = dt;
         this->steps = steps;
         this->initial_conditions = initial;
         this->rate_func = rate;
     }
 
-    std::vector<std::vector<Body>> run() const override {
-        std::vector<std::vector<Body>> states;
+    vector<vector<Body>> run() const override {
+        vector<vector<Body>> states;
         states.push_back(initial_conditions);
         for (size_t n = 1; n <= steps; n++) {
             double time = dt * n;
             // current state = last state
-            std::vector<Body> state_n = states[n - 1];
-            std::vector<Vector3> rate = rate_func(states[n - 1], time - dt);
+            vector<Body> state_n = states[n - 1];
+            vector<Vector3> rate = rate_func(states[n - 1], time - dt);
             // add rate*dt to the current state (which is currently set to last state)
             for (size_t i = 0; i < state_n.size(); i++) {
                 state_n[i].vel.x += dt * rate[i].x;
