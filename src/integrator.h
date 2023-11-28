@@ -10,6 +10,7 @@ public:
     double dt;
     size_t steps;
     std::vector<Body> initial_conditions;
+    // vvv funciton ptr, returns acceleration vectors vvv
     std::vector<Vector3> (*rate_func)(std::vector<Body> state, double time);
 
     virtual std::vector<std::vector<Body>> run() const = 0;

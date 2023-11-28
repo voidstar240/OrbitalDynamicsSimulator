@@ -150,7 +150,7 @@ int main() {
                 std::cout << "list       displays all bodies for simulation" << std::endl;
                 std::cout << "add        adds a new body to be simulated" << std::endl;
                 std::cout << "del        deletes a body at an index" << std::endl;
-                std::cout << "del_all   deletes all the bodies" << std::endl;
+                std::cout << "del_all    deletes all the bodies" << std::endl;
                 std::cout << "set_dt     sets the timestep time for the simulate" << std::endl;
                 std::cout << "set_steps  sets the number of timesteps to simulate" << std::endl;
                 std::cout << "run        runs the simulation and outputs the data to the file" << std::endl;
